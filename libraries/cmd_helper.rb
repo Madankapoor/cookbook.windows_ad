@@ -8,6 +8,14 @@ class CmdHelper
     end
     cmd
   end
+  
+  def self.escape_sequences(component)
+    characters_to_be_escaped = { '#' => '\#' ,'+' => '\+', '<' => '\<','>' => '\>',';' => '\;','=' => '\=' }
+    characters_to_be_escaped.each do |character, escape_sequence|
+      component.sub! character,escape_sequence
+    end
+    component
+  end
 
   def self.dn(name, ou, domain)
     containers = ['users', 'builtin', 'computers', 'foreignsecurityprincipals', 'managed service accounts']
