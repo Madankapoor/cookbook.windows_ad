@@ -9,7 +9,8 @@ class CmdHelper
     cmd
   end
   
-  def self.escape_sequences(component)
+  def self.escape(sequence)
+    component = sequence.clone
     characters_to_be_escaped = { '#' => '\#' ,'+' => '\+', '<' => '\<','>' => '\>',';' => '\;','=' => '\=' }
     characters_to_be_escaped.each do |character, escape_sequence|
       component.sub! character,escape_sequence
@@ -19,10 +20,10 @@ class CmdHelper
 
   def self.dn(name, ou, domain)
     containers = ['users', 'builtin', 'computers', 'foreignsecurityprincipals', 'managed service accounts']
-    dn = "CN=#{name},"
+    dn = "CN=#{self.escape(name)},"
     unless ou.nil?
       if containers.include? ou.downcase
-        dn << "CN=#{ou},"
+        dn << "CN=#{self.escape(ou)},"
       else
         dn << ou_partial_dn(ou) << ','
       end
@@ -31,11 +32,11 @@ class CmdHelper
   end
 
   def self.ou_partial_dn(ou)
-    (ou || '').split('/').reverse.map! { |k| "OU=#{k}" }.join(',')
+    (ou || '').split('/').reverse.map! { |k| "OU=#{self.escape(k)}" }.join(',')
   end
 
   def self.dc_partial_dn(domain)
-    (domain || '').split('.').map! { |k| "DC=#{k}" }.join(',')
+    (domain || '').split('.').map! { |k| "DC=#{self.escape(k)}" }.join(',')
   end
 
   def self.ou_leaf(ou)
